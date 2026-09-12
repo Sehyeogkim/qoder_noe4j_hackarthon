@@ -1,0 +1,28 @@
+{
+  "schema_version": "1",
+  "environment": "LIBERO simulation",
+  "robot": "Franka Panda",
+  "policy": "frozen OpenVLA LIBERO checkpoint",
+  "compute": "RunPod NVIDIA L40S 48 GB",
+  "baseline": {
+    "attempt_id": "7322c85983954b37a9a1bee1113371df",
+    "init_state_id": 4,
+    "outcome": "success",
+    "policy_actions": 134,
+    "intervals": 14,
+    "agent_api_calls": 0,
+    "external_database_used": false
+  },
+  "same_state_instruction_probe": {
+    "init_state_id": 19,
+    "original_instruction": {
+      "outcome": "failure",
+      "policy_actions": 220
+    },
+    "calibrated_instruction": {
+      "outcome": "success",
+      "policy_actions": 120
+    },
+    "claim_boundary": "Direct instruction calibration only; not an agent-memory result or held-out generalization result."
+  }
+}

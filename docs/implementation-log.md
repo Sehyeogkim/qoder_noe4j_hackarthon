@@ -4,7 +4,7 @@
 
 Implementation tool: **Codex**. Intended handoff: **Qoder**. These records do not claim that Qoder has executed or authored this implementation.
 
-The accepted plan is [PLAN.md](../PLAN.md). Its predecessor is preserved in [plan-before-astras.md](plan-before-astras.md). The earlier requested branch was `Astras`; the checkout is now `qoder/test` following an external branch change and is being preserved. Earlier prototypes remain in `bin/`. No real robot success or memory improvement is claimed by the presence of code or documentation.
+This is the chronological engineering log; start with the concise [validation summary](validation.md). The accepted design is [experiment-design.md](experiment-design.md), superseded plans are under [archive/plans](archive/plans/), and the original prototype is under [archive/prototypes](archive/prototypes/). No real robot success or memory improvement is claimed by the presence of code or documentation.
 
 ### Implemented components
 

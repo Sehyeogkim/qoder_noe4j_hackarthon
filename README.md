@@ -1,48 +1,47 @@
 # ARMA — Agentic Robot Memory Architecture
 
-> An external memory layer that helps a frozen VLA learn from prior robot attempts—without retraining its weights.
+> External memory for a frozen robot policy: retrieve prior experience, refine the instruction, execute, evaluate, and remember—without retraining OpenVLA.
 
 ![How memory changes a VLA](assets/readme/vla-memory.png)
 
-## What is ARMA?
+## Why ARMA?
 
-A baseline VLA predicts actions only from the current image and instruction. **ARMA** stores successful and failed attempts in Neo4j, retrieves relevant experience for the current scene, and refines the instruction before the frozen OpenVLA predicts its next action.
+A baseline VLA sees the current image and instruction but does not remember previous attempts. ARMA connects a frozen OpenVLA policy to a Neo4j experience graph so three agents can plan the next subtask, retrieve compatible prior evidence, refine the policy instruction, and record the result.
 
-The goal is simple: **use experience as context so a robot can avoid repeating the same mistake without GPU-heavy retraining.**
+The goal is to help a robot avoid repeating known mistakes without another GPU training cycle.
+
+## Recorded demo
+
+[![Same-state frozen-policy instruction comparison](demo/instruction-comparison-preview.png)](demo/instruction-comparison.mp4)
+
+The video above uses **real OpenVLA inference in LIBERO on a RunPod L40S**, with the same initial state and frozen weights on both sides. The original instruction exhausted 220 actions; a directly calibrated instruction completed the task in 120 actions.
+
+This proves that instruction context can change frozen-policy behavior. It does **not** prove that agent memory caused the success: the successful instruction was calibrated directly. See the [baseline video, exact results, and validation boundary](demo/README.md).
 
 ## Architecture
 
 ![ARMA agent architecture](assets/slides/arma-agent-architecture-v2.png)
 
-ARMA coordinates three agents around one frozen robot policy:
+1. **Task Planner Agent** selects the next subtask from the goal and current observation.
+2. **Memory Retrieval Agent** queries a frozen Neo4j snapshot for task-, robot-, policy-, and perception-compatible attempts, then keeps or refines the instruction.
+3. **Memory Writer Agent** evaluates the new evidence and transactionally records the attempt, decisions, actions, and outcome.
+4. **Frozen OpenVLA** alone predicts robot actions; ARMA changes context, not model weights.
 
-1. **Task Planner Agent** — chooses the next subtask from the goal and current observation.
-2. **Memory Retrieval Agent** — searches Neo4j for relevant attempts and refines the VLA instruction.
-3. **Memory Writer Agent** — evaluates the outcome and records the attempt, evidence, and result.
+## What actually ran
 
-```text
-Task + Observation → Plan → Retrieve Memory → Frozen OpenVLA → Robot
-        ↑                       Neo4j                       ↓
-        └──────────── New Observation ← Evaluate & Record ─┘
-```
+| Component | Recorded result |
+| --- | --- |
+| RunPod GPU | NVIDIA L40S; CUDA BF16 and headless EGL rendering passed |
+| Frozen OpenVLA baseline | LIBERO state 4 success after **134 actions / 14 intervals** |
+| Gemini agents | Real multimodal planner, retrieval, and evaluator calls recorded |
+| Neo4j Aura memory | Live writes, retrieval, graph export, and reconciliation passed |
+| Local verification | **164 tests passed** |
 
-## Stack
+Real agents-with-memory episodes retrieved recorded sources and changed policy instructions/actions, but the evaluated episodes did not succeed. ARMA therefore makes **no success-rate improvement claim**. The full evidence boundary is in [Validation](docs/validation.md).
 
-- **Robot policy:** OpenVLA (frozen weights)
-- **Simulation:** LIBERO · MuJoCo · robosuite · Franka Panda
-- **Memory:** Neo4j graph + vector retrieval
-- **Agents:** Gemini-based planner, retrieval, and evaluator roles
-- **Backend:** Python · FastAPI
+## Run on RunPod
 
-## Verified real execution
-
-ARMA was run on an **NVIDIA L40S GPU on RunPod** with the real frozen OpenVLA checkpoint and the LIBERO Franka Panda simulation. The recorded baseline completed the task successfully after **134 policy actions across 14 intervals**.
-
-This result verifies real GPU inference and simulated robot execution. It was a baseline run without Gemini agent decisions or Neo4j memory retrieval; the complete memory-vs-no-memory experiment remains in progress.
-
-## Run on RunPod (real GPU)
-
-Use a GPU Pod with persistent `/workspace` storage and a CUDA-enabled Ubuntu image. The tested GPU was an **NVIDIA L40S 48 GB**. The RunPod image supplies the NVIDIA driver/CUDA runtime, so do not reinstall CUDA manually.
+Use a CUDA-enabled RunPod image with persistent `/workspace` storage. The tested GPU was an NVIDIA L40S 48 GB; do not reinstall the host driver or CUDA inside the Pod.
 
 ### 1. Clone and install
 
@@ -55,13 +54,11 @@ cd arma
 nvidia-smi
 command -v uv >/dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
 export PATH="$HOME/.local/bin:$PATH"
-
-# Keep the backend and robotics dependencies isolated.
 bash scripts/setup_backend.sh
 bash scripts/setup_worker.sh
 ```
 
-### 2. Validate CUDA and headless rendering
+### 2. Validate the GPU and renderer
 
 ```sh
 export ARMA_VENDOR_ROOT=/workspace/arma/vendor
@@ -75,11 +72,7 @@ python worker/gpu_preflight.py --expected-gpu "NVIDIA L40S"
 "$ARMA_WORKER_VENV/bin/python" -m worker.smoke
 ```
 
-`nvidia-smi` only confirms GPU visibility. Both checks above must pass before loading the 7B policy.
-
-### 3. Start the frozen OpenVLA worker
-
-Run one worker in a dedicated Pod terminal. The checkpoint is downloaded on the first start.
+### 3. Start one frozen-policy worker
 
 ```sh
 export ARMA_WORKER_MODE=real
@@ -90,7 +83,7 @@ export ARMA_HF_REVISION=962318cec55ac10993ff0f5f43eda9a270b4c873
   --host 127.0.0.1 --port 18001
 ```
 
-Keep port `18001` private. In a second Pod terminal, check health and run the baseline:
+Keep port `18001` private. In a second Pod terminal:
 
 ```sh
 cd /workspace/arma
@@ -102,10 +95,10 @@ curl --fail --silent http://127.0.0.1:18001/health
   --init-state 4
 ```
 
-For Gemini + Neo4j memory experiments, create `.env` from `.env.example` and follow the [full setup and experiment runbook](docs/setup.md). Never commit API keys.
+For Gemini and Neo4j runs, copy `.env.example` to `.env`, add credentials only on the Pod, and follow [Setup](docs/setup.md). Never commit credentials.
 
 <details>
-<summary>Optional: build a reusable RunPod image with Docker BuildKit</summary>
+<summary>Optional Docker BuildKit image</summary>
 
 ```sh
 DOCKER_BUILDKIT=1 docker build --platform linux/amd64 \
@@ -114,16 +107,26 @@ DOCKER_BUILDKIT=1 docker build --platform linux/amd64 \
   -f containers/Dockerfile -t arma-worker:l40s .
 ```
 
-Build and push this image before renting GPU time. This repository contains the recipe, but the image build itself has not been verified in this checkout. See [container notes](containers/README.md).
+The recipe is checked in, but this image build was not verified in the current checkout. See [container notes](containers/README.md).
 
 </details>
+## Project map
 
-For the experiment design, see the [Experiment Plan](PLAN.md) and [Implementation Log](docs/implementation-log.md).
+| Path | Purpose |
+| --- | --- |
+| [`arma/`](arma/) | Agent contracts, orchestration loop, budget, Neo4j memory, and replay export |
+| [`worker/`](worker/) | Frozen OpenVLA + LIBERO process and local HTTP boundary |
+| [`prompts/`](prompts/) | Versioned planner, retrieval, and evaluator system prompts |
+| [`scripts/`](scripts/) | Setup, baseline, agent demo, probes, import, and export entrypoints |
+| [`configs/`](configs/) | Fixed experiment and calibration protocols |
+| [`demo/`](demo/) | Compact public recordings and exact result summary |
+| [`docs/`](docs/) | Validation, experiment design, memory schema, and reproducibility notes |
+| [`tests/`](tests/) | Contract, retrieval, recovery, replay, and safety regression tests |
 
 <details>
-<summary>Optional: local contract test without a GPU</summary>
+<summary>Developer-only local contract test</summary>
 
-This developer-only test uses fake agents and a fake robot to validate the software loop. It is not the RunPod/OpenVLA experiment.
+This uses fake agents and a fake robot to validate the software loop. It is not the RunPod/OpenVLA experiment.
 
 ```sh
 uv venv --python 3.11 .venv
@@ -133,7 +136,3 @@ uv pip install --python .venv/bin/python -e '.[test]'
 ```
 
 </details>
-
-## Current status
-
-The local synthetic loop, Gemini role calls, Neo4j Aura transactions, and one real OpenVLA/LIBERO simulation baseline have been validated. The baseline completed state 4 after 134 policy actions. The full three-agent memory loop and controlled memory-vs-no-memory comparison are still pending, so no success-rate improvement is claimed yet.

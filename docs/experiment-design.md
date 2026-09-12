@@ -1,6 +1,6 @@
 # ARMA implementation contract — minimal real demo
 
-Accepted implementation specification, updated 2026-09-12 for the user-authorized A40 replacement and minimal real demo. This document defines required behavior; it is not evidence that every stage has run. See [implementation status](docs/implementation-log.md) for completed checks and blockers, and [setup](docs/setup.md) for executable commands. The superseded specification is preserved in [plan-before-astras.md](docs/plan-before-astras.md); its `every_action` cadence and undecided task/GPU choices are superseded by this contract.
+Accepted implementation specification, updated 2026-09-12 for the minimal real demo. This document defines required behavior; it is not evidence that every stage has run. See the concise [validation summary](validation.md), detailed [implementation log](implementation-log.md), and [setup](setup.md). Superseded specifications are preserved under [`archive/plans/`](archive/plans/).
 
 ## 1. Deliverable and fixed decisions
 
@@ -8,7 +8,7 @@ Build **ARMA — Agentic Robot Memory Architecture**: three agents use external 
 
 | Area | Fixed decision |
 | --- | --- |
-| Working branch | Preserve the current `qoder/test` checkout; `Astras` was the earlier requested branch. Do not switch it implicitly. Keep prior prototypes in `bin/`. |
+| Working branch | Preserve the current `qoder/test` checkout. The original synthetic prototype is archived under `docs/archive/prototypes/`. |
 | Intended development handoff | Qoder; record the actual tool used for each implementation session |
 | Agent model | `gemini-3-flash-preview`, three separate system prompts and response schemas |
 | Robot/environment | LIBERO fixed-base Franka Panda; MuJoCo/robosuite |
@@ -23,7 +23,7 @@ Build **ARMA — Agentic Robot Memory Architecture**: three agents use external 
 | Demo | Recorded comparison and interactive evidence inspection |
 | Total spending cap | US$10: compute/storage $5, model API $4, shutdown/uncertainty reserve $1 |
 
-The latest user decision selects A40 again after the allocated L40S failed CUDA initialization and was deleted. The minimal five-episode scope still supersedes the original nine-episode initial evaluation. The attempted A40 replacement currently has no allocatable capacity; do not substitute another GPU or higher price automatically. Prepare the dependency container before renting the paid GPU. The preceding contract is preserved in [plan-before-l40s-minimal.md](docs/plan-before-l40s-minimal.md), and the actual L40S failure/deletion is recorded in the implementation log.
+The minimal five-episode scope superseded the original nine-episode initial evaluation. Historical GPU allocation decisions are preserved in the archived plans and [implementation log](implementation-log.md). The later successful user-provided L40S execution is summarized in [validation](validation.md).
 
 The checkpoint was already fine-tuned upstream for LIBERO. This project adds no post-training, LoRA, learned action correction, or model-internal hooks. The original model emits a single seven-dimensional action; ten repeated inferences are not a native action chunk. [Checkpoint](https://huggingface.co/openvla/openvla-7b-finetuned-libero-spatial)
 

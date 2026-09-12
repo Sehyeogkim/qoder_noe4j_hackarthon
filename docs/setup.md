@@ -54,9 +54,9 @@ Use one Aura Free instance and place its database credentials in `.env`. Confirm
 
 Do not seed synthetic test records into the real execution snapshot. The in-memory repository is a test implementation, not evidence that Aura transactions or Cypher queries have run successfully.
 
-## Prepare the container before paid GPU time
+## Prepare a RunPod GPU environment
 
-The previous A40 allocation failed. The user now authorizes one **L40S 48 GB at $0.79/hour**, retaining the $10 total cap. Build the dependency image before provisioning the GPU. Image preparation is a separate gate from GPU validation: a container build does not establish CUDA runtime, EGL rendering or OpenVLA inference success.
+The verified execution used an **NVIDIA L40S 48 GB** Pod. Dependency preparation is a separate gate from GPU validation: installation alone does not establish CUDA runtime, EGL rendering, or OpenVLA inference success.
 
 Use a trusted CUDA 12.1 **devel** base image with `nvcc`, EGL/GL system libraries, Git, SSH and `uv`. Include the repository under `/workspace/arma` and prepare both backend and worker environments. Run the existing worker setup script during image preparation on a build host:
 
@@ -66,9 +66,9 @@ bash scripts/setup_worker.sh
 
 The script expects a CUDA 12.1 toolchain, clones and pins official sources, creates `/workspace/arma/worker-venv`, installs dependencies, and prepares LIBERO path configuration. It is not a Docker image builder or a pod provisioning command. The prepared image must be built for the Linux GPU host and published with an immutable digest before paid provisioning; no unverified build command is implied here. Follow any checked-in container preparation scripts added for this gate and record the build result.
 
-Do not spend paid GPU time compiling FlashAttention or installing the full dependency tree. Preserve resolved dependency locks and the image digest. Any remaining checkpoint download/storage and GPU warm-up consume the same budget. Recheck L40S availability and price immediately before creation; do not silently substitute hardware or exceed the authorized rate.
+Prefer the published FlashAttention wheel used by `scripts/setup_worker.sh`; source compilation is disabled by default. Preserve resolved dependency locks and the image digest. Check current GPU availability and price before creating a Pod.
 
-After image preparation succeeds, provision at most one L40S with a 60 GB working volume and an explicit shutdown deadline. Bound compute plus storage to $5, API calls to $4, and retain $1 reserve; the deadline is at most six hours and may be shorter. Keep real artifacts on the working volume. Once the pod starts, validate actual CUDA and EGL before loading the policy:
+Keep real artifacts on persistent `/workspace` storage. Once the Pod starts, validate actual CUDA and EGL before loading the policy:
 
 ```sh
 export ARMA_VENDOR_ROOT=/workspace/arma/vendor
@@ -78,6 +78,7 @@ export MUJOCO_GL=egl
 export PYOPENGL_PLATFORM=egl
 export CUDA_VISIBLE_DEVICES=0
 export MUJOCO_EGL_DEVICE_ID=0
+python worker/gpu_preflight.py --expected-gpu "NVIDIA L40S"
 "$ARMA_WORKER_VENV/bin/python" -m worker.smoke
 ```
 
@@ -88,7 +89,8 @@ Start the real worker in a separate terminal on the pod:
 ```sh
 export ARMA_WORKER_MODE=real
 export ARMA_ARTIFACT_DIR=/workspace/arma/artifacts/real/worker
-"$ARMA_WORKER_VENV/bin/uvicorn" worker.app:create_app --factory --host 127.0.0.1 --port 8001
+export ARMA_HF_REVISION=962318cec55ac10993ff0f5f43eda9a270b4c873
+"$ARMA_WORKER_VENV/bin/python" -m worker.serve --host 127.0.0.1 --port 18001
 ```
 
 The real model is loaded lazily when the worker initializes its robot. Run backend CLI commands on the same pod so local RGB references are readable by Gemini and the replay exporter. An SSH tunnel can expose the localhost worker to local diagnostics without publishing the worker endpoint. Do not assume a remote HTTP client can access the pod's filesystem paths.
@@ -98,17 +100,19 @@ The real model is loaded lazily when the worker initializes its robot. Run backe
 With the worker ready and Gemini/Neo4j configured:
 
 ```sh
-.venv/bin/python -m arma.cli doctor
-.venv/bin/python -m arma.cli migrate-memory
-.venv/bin/python -m arma.cli --artifacts artifacts/real run --condition baseline --init-state 4 --split smoke
+export ARMA_WORKER_URL=http://127.0.0.1:18001
+BACKEND_PYTHON=/workspace/arma/backend-venv/bin/python
+"$BACKEND_PYTHON" -m arma.cli doctor
+"$BACKEND_PYTHON" -m arma.cli migrate-memory
+"$BACKEND_PYTHON" -m arma.cli --artifacts artifacts/real run --condition baseline --init-state 4 --split smoke
 ```
 
 Inspect the saved manifest, actions, frames, environment predicate and video before collection. Baseline uses the full official task instruction without Gemini decision calls. A smoke outcome need not be success, but runtime errors, preprocessing mistakes or missing evidence must be resolved before evaluation.
 
 ```sh
-.venv/bin/python -m arma.cli --artifacts artifacts/real collect
-.venv/bin/python -m arma.cli --artifacts artifacts/real compare
-.venv/bin/python -m arma.cli --artifacts artifacts/real export --output replay-real
+"$BACKEND_PYTHON" -m arma.cli --artifacts artifacts/real collect
+"$BACKEND_PYTHON" -m arma.cli --artifacts artifacts/real compare
+"$BACKEND_PYTHON" -m arma.cli --artifacts artifacts/real export --output replay-real
 ```
 
 The revised `collect` contract uses states 0/1 and at most one optional failed-attempt retry, then freezes `evaluation-v1` and saves `snapshot.json`. The revised `compare` contract targets the no-memory/memory pair on state 10; the state-4 baseline is run separately first. Inspect `comparison.json`: `complete=false` means the intended pair did not finish. These revised defaults must pass the current implementation checks before paid execution; older four-state/nine-episode behavior must not be used accidentally. Commands should not be blindly repeated against an existing frozen snapshot; preserve the original run root and inspect current records first.
@@ -116,7 +120,7 @@ The revised `collect` contract uses states 0/1 and at most one optional failed-a
 The first online export saves `graph.json` beside attempt artifacts. Later export without the database:
 
 ```sh
-.venv/bin/python -m arma.cli --artifacts artifacts/real export --offline --output replay-real
+"$BACKEND_PYTHON" -m arma.cli --artifacts artifacts/real export --offline --output replay-real
 ```
 
 An offline export only contains the saved graph if `graph.json` exists. Empty graph output is not equivalent to a successful Neo4j demonstration.
@@ -135,4 +139,4 @@ bash containers/check_dependencies.sh
 
 For the exact pinned image recipe and build command, see [containers/README.md](../containers/README.md). The dependency resolver passed locally; no Docker image was built here. On an amd64 Docker host the recipe installs the isolated environments before GPU allocation. The current machine has no Docker runtime.
 
-The actual three-role SDK connection was checked with explicitly synthetic images. Local regression suite: 67 passed. Aura and real CUDA/EGL/inference gates remain open.
+The current [validation summary](validation.md) records the latest verified GPU, agent, Aura, and regression results.
