@@ -48,7 +48,85 @@ uv pip install --python .venv/bin/python -e '.[test]'
 
 Then open `http://localhost:8766`.
 
-For the real worker and experiment workflow, see [Setup](docs/setup.md), [Experiment Plan](PLAN.md), and the [Implementation Log](docs/implementation-log.md).
+## Run on RunPod (real GPU)
+
+Use a GPU Pod with persistent `/workspace` storage and a CUDA-enabled Ubuntu image. The tested GPU was an **NVIDIA L40S 48 GB**. The RunPod image supplies the NVIDIA driver/CUDA runtime, so do not reinstall CUDA manually.
+
+### 1. Clone and install
+
+```sh
+cd /workspace
+git clone --branch qoder/test --single-branch \
+  https://github.com/Sehyeogkim/qoder_noe4j_hackarthon.git arma
+cd arma
+
+nvidia-smi
+command -v uv >/dev/null || curl -LsSf https://astral.sh/uv/install.sh | sh
+export PATH="$HOME/.local/bin:$PATH"
+
+# Keep the backend and robotics dependencies isolated.
+bash scripts/setup_backend.sh
+bash scripts/setup_worker.sh
+```
+
+### 2. Validate CUDA and headless rendering
+
+```sh
+export ARMA_VENDOR_ROOT=/workspace/arma/vendor
+export ARMA_WORKER_VENV=/workspace/arma/worker-venv
+export PYTHONPATH=/workspace/arma:/workspace/arma/vendor/openvla
+export HF_HOME=/workspace/arma/hf-cache
+export MUJOCO_GL=egl PYOPENGL_PLATFORM=egl
+export CUDA_VISIBLE_DEVICES=0 MUJOCO_EGL_DEVICE_ID=0
+
+python worker/gpu_preflight.py --expected-gpu "NVIDIA L40S"
+"$ARMA_WORKER_VENV/bin/python" -m worker.smoke
+```
+
+`nvidia-smi` only confirms GPU visibility. Both checks above must pass before loading the 7B policy.
+
+### 3. Start the frozen OpenVLA worker
+
+Run one worker in a dedicated Pod terminal. The checkpoint is downloaded on the first start.
+
+```sh
+export ARMA_WORKER_MODE=real
+export ARMA_ARTIFACT_DIR=/workspace/arma/artifacts/gpu-baseline/worker
+export ARMA_HF_REVISION=962318cec55ac10993ff0f5f43eda9a270b4c873
+
+"$ARMA_WORKER_VENV/bin/python" -m worker.serve \
+  --host 127.0.0.1 --port 18001
+```
+
+Keep port `18001` private. In a second Pod terminal, check health and run the baseline:
+
+```sh
+cd /workspace/arma
+curl --fail --silent http://127.0.0.1:18001/health
+
+/workspace/arma/backend-venv/bin/python scripts/run_gpu_baseline.py \
+  --worker-url http://127.0.0.1:18001 \
+  --artifacts artifacts/gpu-baseline \
+  --init-state 4
+```
+
+For Gemini + Neo4j memory experiments, create `.env` from `.env.example` and follow the [full setup and experiment runbook](docs/setup.md). Never commit API keys.
+
+<details>
+<summary>Optional: build a reusable RunPod image with Docker BuildKit</summary>
+
+```sh
+DOCKER_BUILDKIT=1 docker build --platform linux/amd64 \
+  --build-arg ARMA_CUDA_ARCH=8.9 \
+  --build-arg "ARMA_EXPECTED_GPU=NVIDIA L40S" \
+  -f containers/Dockerfile -t arma-worker:l40s .
+```
+
+Build and push this image before renting GPU time. This repository contains the recipe, but the image build itself has not been verified in this checkout. See [container notes](containers/README.md).
+
+</details>
+
+For the experiment design, see the [Experiment Plan](PLAN.md) and [Implementation Log](docs/implementation-log.md).
 
 ## Current status
 
