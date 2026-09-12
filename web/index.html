@@ -1,0 +1,22 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ARMA · Experience Replay</title><link rel="stylesheet" href="styles.css">
+  <script defer src="bundle.js"></script><script defer src="app.js"></script>
+</head>
+<body>
+  <header><a href="index.html" class="brand"><span class="mark">A</span><span>ARMA<small>AGENTIC ROBOT MEMORY ARCHITECTURE</small></span></a><span class="header-label">EXPERIENCE REPLAY <span class="live-dot"></span> OFFLINE READY</span></header>
+  <main>
+    <section class="intro"><div><p class="eyebrow">THREE AGENTS. ONE FROZEN ROBOT POLICY.</p><h1>See what the robot <em>remembered.</em></h1><p class="lede">Compare recorded attempts. Follow the evidence behind each instruction.</p></div><div class="provenance" id="provenance">NO EXECUTION DATA</div></section>
+    <section class="toolbar"><label>Comparison state <select id="state-select" aria-label="Comparison initialization state"></select></label><p id="selection-note"></p><label class="load-button">Load bundle JSON<input type="file" id="bundle-input" accept="application/json,.json"></label></section>
+    <div id="error" class="notice" role="alert" hidden></div>
+    <section id="empty" class="empty"><span class="empty-icon">↗</span><h2>Your execution evidence belongs here.</h2><p>No attempts have been loaded. Export a run to inspect its videos, decisions, and memory graph.</p><p class="muted">No success rates or demonstrations are prefilled.</p></section>
+    <div id="workspace" hidden>
+      <section class="comparison" id="comparison" aria-label="Recorded comparison"></section>
+      <section class="panel graph-panel"><div class="panel-heading"><div><p class="eyebrow">CONNECTED EXPERIENCE</p><h2>Follow the recorded evidence</h2></div><div><label class="muted">Graph detail <select id="graph-level" aria-label="Graph detail"><option value="decisions">Decision overview</option><option value="all">All actions and evidence</option></select></label><p id="graph-count" class="muted"></p></div></div><div class="graph-layout"><div><div class="graph-canvas" id="graph"></div><div class="edge-list" id="edges"></div></div><aside class="details" id="details"><p class="muted">Select a record to view its properties and evidence.</p></aside></div></section>
+      <section class="panel"><div class="panel-heading"><div><p class="eyebrow">EVERY RECORDED ATTEMPT</p><h2>Complete results</h2></div><span id="run-count" class="muted"></span></div><div class="table-scroll"><table><thead><tr><th>Attempt</th><th>State</th><th>Condition</th><th>Evidence</th><th>Result</th><th>Actions / decisions</th><th>Wall time</th><th>Agent API cost</th></tr></thead><tbody id="results"></tbody></table></div></section>
+    </div>
+  </main><footer>Frozen OpenVLA · LIBERO · Neo4j Memory<span id="generated-at"></span></footer>
+</body>
+</html>

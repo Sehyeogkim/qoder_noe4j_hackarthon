@@ -1,0 +1,12 @@
+Generation method: built-in image generation tool.
+
+Create one polished 16:9 English presentation slide for ARMA, matching a deck with white backgrounds, bold deep navy sans serif, teal connectors, light blue rounded cards, orange reserved for memory, clean spacious technical illustrations.
+Title top left: "From AI Agents to Agentic Robots"
+Subtitle below in teal: "What if we brought the agent toolkit to a VLA?"
+Two balanced columns with large clear diagrams and generous whitespace.
+LEFT heading "LLM + Agent Toolkit". Center a large navy rounded square with white text "LLM". Around it four small connected satellite cards, easy to read: "Tools" (wrench icon), "Skills" (checklist icon), "MCP" (plug icon), and orange "Memory" (graph icon). Each connects to the central LLM via simple lines, no crossing. Beneath diagram teal downward arrow into a pale blue result bar "AI Agent", smaller line "Reasons, uses tools, completes digital tasks".
+RIGHT heading "VLA + Agent Toolkit". Match identical visual organization, central navy rounded square with white text "VLA". Same satellite cards "Tools", "Skills", "MCP", orange "Memory", same positions. Beneath diagram teal downward arrow into pale teal result bar "Agentic Robot System", smaller line "Observes, acts, checks outcomes". Add a tasteful small white-and-black robot gripper and teal cup illustration adjacent to right result bar, kept separate from labels.
+Between the columns at mid height a restrained right arrow with small label "Extend the pattern". Do not make this look like a literal drop-in model replacement.
+Bottom full-width very pale teal banner with bold navy text "Same agent pattern. A physical action loop." and beneath smaller navy text "An external controller connects tools, memory, and robot feedback."
+Tiny footer "ARMA · Agentic Robot Memory Architecture"
+Conceptual accuracy: This is an architectural analogy and proposed system design, not a claim VLA inherently supports function calling or MCP. LLM/VLA boxes are the central models; toolkit and orchestration are external. No training or weight changes depicted. MCP represents a connection interface, not cognition. Do not add implementation detail or extra labels beyond specified text. No percentages, no hype claims, no clutter. Crisp slide typography, consistent spacing, no mockup frame.

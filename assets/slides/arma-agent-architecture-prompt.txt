@@ -1,0 +1,12 @@
+Generation method: built-in image generation tool.
+
+Create a polished minimal 16:9 English Google Slides architecture slide for ARMA. White background, bold navy sans serif, teal flow arrows and robot accents, orange ONLY for memory, pale blue rounded cards, generous whitespace, matching a clean technical presentation with realistic white-and-black Panda robot illustrations. Title top left "ARMA Agent Architecture", small teal subtitle "Experience-informed instructions. Frozen VLA weights."
+Central simple left-to-right row, four large clearly spaced blocks, connected by teal arrows:
+1 "Task + Observation" with small camera and task icons.
+2 "ARMA Agents" a larger pale blue container with only three compact stacked internal labels: "Task Planner", "Memory Retrieval", "Instruction Revision". Keep this clean, no tiny text.
+3 "Frozen OpenVLA" with navy lock icon and small sublabel "Predict next action".
+4 "Robot Environment" with small refined illustration of white-and-black fixed-base Franka Panda gripper and teal cup, small sublabel "Execute & observe".
+Above ARMA Agents place one orange outlined node/graph card "Neo4j Memory" with small sublabel "Situations · Attempts · Outcomes". Orange downward arrow from memory to ARMA Agents labelled "Retrieve".
+Below main row place a compact orange outlined card "Memory Writer" below the gap between ARMA and environment. Draw an orange arrow from Robot Environment down into Memory Writer labelled "Outcome"; from Memory Writer route an orange line to Neo4j Memory around the LEFT exterior of the main row, staying clear of Task + Observation, labelled "Store experience". Avoid crossing boxes or other arrows. Separately a teal feedback path from Robot Environment along bottom to Task + Observation labelled "New observation". Keep the memory storage line and observation return line visually separate, clean and easy to follow.
+Tiny footer "ARMA · Agentic Robot Memory Architecture".
+Keep diagram sparse, large readable labels, no equations, no transformer internals, no token diagrams, no performance numbers, no decorative clutter. Model weights remain frozen; do not show training. Original OpenVLA predicts a single next action, NOT an action chunk. Exact spelling. Finished slide image, no frame or mockup.

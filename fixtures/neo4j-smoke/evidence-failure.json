@@ -1,0 +1,7 @@
+{
+  "provenance": "synthetic",
+  "task_success": false,
+  "observed_facts": [
+    "Synthetic fixture only: configured task outcome is failure. No robot or simulator was executed."
+  ]
+}

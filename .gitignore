@@ -1,0 +1,14 @@
+.env
+.env.*
+!.env.example
+.venv/
+__pycache__/
+.pytest_cache/
+*.egg-info/
+artifacts/
+replay-output/
+.runtime/
+*.sqlite*
+*.pem
+*.key
+notion-backups/

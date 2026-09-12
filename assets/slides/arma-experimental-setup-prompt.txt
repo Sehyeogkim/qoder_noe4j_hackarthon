@@ -1,0 +1,14 @@
+Use case: infographic-diagram
+Asset type: finished 16:9 landscape presentation slide image
+Primary request: Create a polished English technical infographic slide titled "ARMA — Experimental Setup". Summarize the actual development environment, compute, robot policy, agent model, graph memory, robot, and simulator used by ARMA.
+
+Exact content:
+- Qoder — Python orchestration
+- RunPod · NVIDIA L40S — 46 GB VRAM · CUDA · BF16
+- OpenVLA 7B — LIBERO-Spatial · Frozen weights
+- Gemini 3 Flash Preview — Planner · Retrieval · Evaluator
+- Neo4j Aura Free — Attempts · Evidence · Outcomes
+- Franka Panda — LIBERO · MuJoCo · robosuite
+- Bottom callout: "No post-training. Experience changes the instruction—not the VLA weights."
+
+Style: pure white background, deep navy headings, teal connectors, pale blue cards, orange only for graph memory, clean technical icons, and a small fixed-base Franka Panda illustration. No performance claims, success-rate numbers, CPU-core or system-RAM claims, physical-robot claim, training arrows, logos, watermarks, or extra text.

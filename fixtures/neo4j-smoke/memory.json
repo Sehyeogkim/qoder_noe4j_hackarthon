@@ -1,0 +1,281 @@
+{
+  "run_id": "arma_schema_smoke_v1",
+  "provenance": "synthetic",
+  "description": "Two hand-authored schema/connectivity samples, never real robot results",
+  "entries": [
+    {
+      "attempt": {
+        "attempt_id": "arma_schema_smoke_v1:failure",
+        "step_index": 0,
+        "task_goal": "pick up the black bowl from table center and place it on the plate",
+        "success_criteria": {
+          "criterion_id": "synthetic_goal_fixture",
+          "description": "Schema smoke only; not an evaluated LIBERO trial"
+        },
+        "initial_context": {
+          "source": "synthetic_fixture",
+          "description": "Hand-authored memory schema example"
+        },
+        "executed_instruction": "",
+        "status": "running",
+        "outcome": null,
+        "termination_reason": null,
+        "latest_observation_ref": "fixtures/neo4j-smoke/evidence-failure.json",
+        "evidence_refs": [],
+        "judgment_source": "synthetic_fixture",
+        "observed_facts": [],
+        "cause_hypothesis": null,
+        "previous_attempt_id": null,
+        "run_id": "arma_schema_smoke_v1",
+        "task_id": "arma_schema_smoke_v1:task",
+        "robot_id": "franka_panda",
+        "policy_revision": "synthetic_fixture_no_policy_run",
+        "perception_mode": "synthetic_fixture",
+        "dataset_split": "smoke_test",
+        "provenance": "synthetic",
+        "schema_version": "1.0"
+      },
+      "decision": {
+        "decision_id": "arma_schema_smoke_v1:failure:decision:0",
+        "attempt_id": "arma_schema_smoke_v1:failure",
+        "decision_index": 0,
+        "start_step_index": 0,
+        "end_step_index": 1,
+        "provenance": "synthetic",
+        "planner": {
+          "stage": "place",
+          "skill_id": "pick_place_v1",
+          "skill_version": "1"
+        },
+        "retrieval": {
+          "decision": "keep",
+          "executed_instruction": "pick up the black bowl from table center and place it on the plate",
+          "source_decision_ids": [],
+          "candidates": []
+        },
+        "execution": {
+          "actual_instruction": "pick up the black bowl from table center and place it on the plate",
+          "actions": [
+            {
+              "action_id": "arma_schema_smoke_v1:failure:action:1",
+              "step_index": 1,
+              "action": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                -1
+              ],
+              "provenance": "synthetic",
+              "executed": false,
+              "observation_before_ref": "fixtures/neo4j-smoke/evidence-failure.json",
+              "observation_after_ref": "fixtures/neo4j-smoke/evidence-failure.json"
+            }
+          ]
+        },
+        "evaluation": {
+          "task_outcome": "failure",
+          "subtask_outcome": "failure",
+          "task_judgment_source": "synthetic_fixture",
+          "subtask_judgment_source": "synthetic_fixture",
+          "observed_facts": [
+            "Synthetic fixture only: configured task outcome is failure. No robot or simulator was executed."
+          ],
+          "cause_hypothesis": null,
+          "task_evidence_refs": [
+            "arma_schema_smoke_v1:failure:evidence"
+          ],
+          "subtask_evidence_refs": [
+            "arma_schema_smoke_v1:failure:evidence"
+          ]
+        },
+        "contexts": [
+          {
+            "kind": "target_above_plate",
+            "value": "true",
+            "source": "synthetic_fixture",
+            "evidence_ids": [
+              "arma_schema_smoke_v1:failure:evidence"
+            ]
+          },
+          {
+            "kind": "target_released",
+            "value": "false",
+            "source": "synthetic_fixture",
+            "evidence_ids": [
+              "arma_schema_smoke_v1:failure:evidence"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "evidence_id": "arma_schema_smoke_v1:failure:evidence",
+            "uri": "fixtures/neo4j-smoke/evidence-failure.json",
+            "sha256": "cebdcc95ca35f9579c6cd7fd44f4059b6810427ed469c6ea0ca996ed4ef44aa5",
+            "media_type": "application/json",
+            "source": "synthetic_fixture"
+          }
+        ]
+      },
+      "attempt_update": {
+        "step_index": 1,
+        "status": "completed",
+        "outcome": "failure",
+        "termination_reason": "synthetic_fixture_failure",
+        "executed_instruction": "pick up the black bowl from table center and place it on the plate",
+        "latest_observation_ref": "fixtures/neo4j-smoke/evidence-failure.json",
+        "evidence_refs": [
+          "arma_schema_smoke_v1:failure:evidence"
+        ],
+        "judgment_source": "synthetic_fixture",
+        "observed_facts": [
+          "Synthetic fixture only: configured task outcome is failure. No robot or simulator was executed."
+        ],
+        "cause_hypothesis": null
+      }
+    },
+    {
+      "attempt": {
+        "attempt_id": "arma_schema_smoke_v1:success",
+        "step_index": 0,
+        "task_goal": "pick up the black bowl from table center and place it on the plate",
+        "success_criteria": {
+          "criterion_id": "synthetic_goal_fixture",
+          "description": "Schema smoke only; not an evaluated LIBERO trial"
+        },
+        "initial_context": {
+          "source": "synthetic_fixture",
+          "description": "Hand-authored memory schema example"
+        },
+        "executed_instruction": "",
+        "status": "running",
+        "outcome": null,
+        "termination_reason": null,
+        "latest_observation_ref": "fixtures/neo4j-smoke/evidence-success.json",
+        "evidence_refs": [],
+        "judgment_source": "synthetic_fixture",
+        "observed_facts": [],
+        "cause_hypothesis": null,
+        "previous_attempt_id": "arma_schema_smoke_v1:failure",
+        "run_id": "arma_schema_smoke_v1",
+        "task_id": "arma_schema_smoke_v1:task",
+        "robot_id": "franka_panda",
+        "policy_revision": "synthetic_fixture_no_policy_run",
+        "perception_mode": "synthetic_fixture",
+        "dataset_split": "smoke_test",
+        "provenance": "synthetic",
+        "schema_version": "1.0"
+      },
+      "decision": {
+        "decision_id": "arma_schema_smoke_v1:success:decision:0",
+        "attempt_id": "arma_schema_smoke_v1:success",
+        "decision_index": 0,
+        "start_step_index": 0,
+        "end_step_index": 1,
+        "provenance": "synthetic",
+        "planner": {
+          "stage": "place",
+          "skill_id": "pick_place_v1",
+          "skill_version": "1"
+        },
+        "retrieval": {
+          "decision": "adapt",
+          "executed_instruction": "place the black bowl on the plate and release it",
+          "source_decision_ids": [
+            "arma_schema_smoke_v1:failure:decision:0"
+          ],
+          "candidates": [
+            {
+              "source_decision_id": "arma_schema_smoke_v1:failure:decision:0",
+              "adopted": true,
+              "reason": "Synthetic graph-connectivity fixture; no real retrieval or inference performed"
+            }
+          ]
+        },
+        "execution": {
+          "actual_instruction": "place the black bowl on the plate and release it",
+          "actions": [
+            {
+              "action_id": "arma_schema_smoke_v1:success:action:1",
+              "step_index": 1,
+              "action": [
+                0,
+                0,
+                0,
+                0,
+                0,
+                0,
+                -1
+              ],
+              "provenance": "synthetic",
+              "executed": false,
+              "observation_before_ref": "fixtures/neo4j-smoke/evidence-success.json",
+              "observation_after_ref": "fixtures/neo4j-smoke/evidence-success.json"
+            }
+          ]
+        },
+        "evaluation": {
+          "task_outcome": "success",
+          "subtask_outcome": "success",
+          "task_judgment_source": "synthetic_fixture",
+          "subtask_judgment_source": "synthetic_fixture",
+          "observed_facts": [
+            "Synthetic fixture only: configured task outcome is success. No robot or simulator was executed."
+          ],
+          "cause_hypothesis": null,
+          "task_evidence_refs": [
+            "arma_schema_smoke_v1:success:evidence"
+          ],
+          "subtask_evidence_refs": [
+            "arma_schema_smoke_v1:success:evidence"
+          ]
+        },
+        "contexts": [
+          {
+            "kind": "target_above_plate",
+            "value": "true",
+            "source": "synthetic_fixture",
+            "evidence_ids": [
+              "arma_schema_smoke_v1:success:evidence"
+            ]
+          },
+          {
+            "kind": "target_released",
+            "value": "true",
+            "source": "synthetic_fixture",
+            "evidence_ids": [
+              "arma_schema_smoke_v1:success:evidence"
+            ]
+          }
+        ],
+        "evidence": [
+          {
+            "evidence_id": "arma_schema_smoke_v1:success:evidence",
+            "uri": "fixtures/neo4j-smoke/evidence-success.json",
+            "sha256": "9d9a2b2d382d18c14d585657f0e743128f49fbd497578e8d1e2e2def9faea239",
+            "media_type": "application/json",
+            "source": "synthetic_fixture"
+          }
+        ]
+      },
+      "attempt_update": {
+        "step_index": 1,
+        "status": "completed",
+        "outcome": "success",
+        "termination_reason": "synthetic_fixture_success",
+        "executed_instruction": "place the black bowl on the plate and release it",
+        "latest_observation_ref": "fixtures/neo4j-smoke/evidence-success.json",
+        "evidence_refs": [
+          "arma_schema_smoke_v1:success:evidence"
+        ],
+        "judgment_source": "synthetic_fixture",
+        "observed_facts": [
+          "Synthetic fixture only: configured task outcome is success. No robot or simulator was executed."
+        ],
+        "cause_hypothesis": null
+      }
+    }
+  ]
+}

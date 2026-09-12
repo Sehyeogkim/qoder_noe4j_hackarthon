@@ -1,0 +1,12 @@
+Generation method: built-in image generation tool.
+
+Create a revised 16:9 English ARMA architecture slide. Clean white background, bold navy typography, teal arrows, pale blue rounded cards, orange memory highlights, ample whitespace, consistent with prior ARMA deck. Title "ARMA Agent Architecture". Subtitle "Three agents. One frozen robot policy."
+Show THREE distinct individually numbered agent cards, never hide them inside a generic agents container:
+Main flow left to right:
+small input card "Task + Observation" →
+pale blue card "01  Task Planner Agent" with sublabel "Choose the next subtask" →
+pale orange card "02  Memory Retrieval Agent" with sublabel "Retrieve experience & refine instruction" →
+navy/pale blue card "Frozen OpenVLA" with lock icon and sublabel "Predict next action" →
+card "Robot Environment" with small tasteful realistic white-and-black fixed-base Panda robot and teal cup, sublabel "Execute & observe".
+Above middle cards put orange outlined graph database card "Neo4j Memory", small text "Situations · Attempts · Outcomes". Orange downward arrow from database to agent 02 labelled "Retrieve".
+Below main flow place separate orange outlined card "03  Memory Writer Agent" with sublabel "Record the attempt and outcome". Arrow from Robot Environment down to agent 03 labelled "Outcome". Route orange arrow from agent 03 to Neo4j Memory around the exterior of diagram labelled "Store experience". Teal feedback arrow from Robot Environment back to Task + Observation labelled "New observation", keep separate from memory path. Make all arrow directions accurate, no confusing intersections. Main row cards may use width efficiently, labels broken onto two lines for readability. This is a simple schematic, not transformer internals. Instruction refinement belongs within agent 02, NOT an additional fourth agent. No skills or additional modules. All model weights stay frozen, no training arrows, original OpenVLA predicts a single next action not action chunks. Tiny footer "ARMA · Agentic Robot Memory Architecture". Exact English text, finished presentation image.

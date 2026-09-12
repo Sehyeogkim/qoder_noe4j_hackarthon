@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>RoboRecall · 설계 워크보드</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <aside class="sidebar">
+    <a class="brand" href="#scenario"><span class="brand-mark">r<span>↗</span></span><span>RoboRecall<small>EXPERIENCE → ACTION</small></span></a>
+    <div class="workspace-label">HACKATHON WORKBOARD</div>
+    <nav aria-label="설계 영역">
+      <button class="nav-item active" data-page="scenario" aria-current="page"><span>01</span>시나리오 <b>↗</b></button>
+      <button class="nav-item" data-page="skills"><span>02</span>Skill 경계 <b>↗</b></button>
+      <button class="nav-item" data-page="graph"><span>03</span>그래프 스키마 <b>↗</b></button>
+      <button class="nav-item" data-page="contracts"><span>04</span>입출력 계약 <b>↗</b></button>
+    </nav>
+    <div class="sidebar-note"><span class="tiny-label">OUR QUESTION</span><p>다른 장면에서도<br>쓸 수 있는 기억은<br>무엇일까?</p><div class="line"></div><small>Neo4j · 경험과 근거 연결<br>Qoder · 구현 및 검증 도구</small></div>
+    <div class="sidebar-bottom"><i></i>설계 초안 v0.1 <span>함께 검토 중</span></div>
+  </aside>
+  <main>
+    <header class="topbar"><span>LAB / <strong>FAILURE MEMORY</strong></span><span class="draft">PROPOSAL · 실험 전</span></header>
+    <section class="page" id="scenario" aria-labelledby="scenario-title">
+      <div class="page-heading"><div><p class="eyebrow">01 / SCENARIO</p><h1 id="scenario-title">같은 장면이 아니라,<br><em>같은 위험</em>을 기억한다.</h1><p class="intro">테이블 위 물체 운반. 과거 실패와 복구를 검색하고,<br class="desktop-break">현재 조건에 맞는 짧은 명령으로 바꾸는 실험.</p></div><div class="hypothesis"><span class="tiny-label">검증할 가설</span><p>조건에 맞는 경험이 <br>VLA의 행동을 바꾸고 <br>반복 실패를 줄일까?</p><small>모델 가중치 고정 · 명령만 변경</small></div></div>
+      <div class="section-heading"><h2>장면이 바뀌면, 기억의 사용도 바뀐다</h2><span>아래 조건을 선택해 보세요</span></div>
+      <div class="presets" role="group" aria-label="현재 장면 선택">
+        <button class="preset selected" data-scene="match" aria-pressed="true"><span>A</span>다른 물체, 같은 위험</button>
+        <button class="preset" data-scene="blocked" aria-pressed="false"><span>B</span>위쪽 공간이 막힘</button>
+        <button class="preset" data-scene="unknown" aria-pressed="false"><span>C</span>위쪽 공간이 불명확</button>
+        <button class="preset" data-scene="clear" aria-pressed="false"><span>D</span>이동 구간에 장애물 없음</button>
+      </div>
+      <div class="scene-grid">
+        <article class="scene-card"><div class="card-heading"><span><i class="dot amber"></i>과거 경험</span><small>MEMORY / E-001 → E-002</small></div><div id="past-scene" class="scene-art"></div><div class="scene-caption"><strong>사과 → 접시 / 컵과 접촉</strong><p>낮은 운반 중 실패. 위로 들어 올린 재시도에서 성공.</p><span class="chip">예시 기록 · 원인은 아직 가설</span></div></article>
+        <article class="scene-card current"><div class="card-heading"><span><i class="dot mint"></i>현재 관측</span><small>NEW SCENE / 평가용 예시</small></div><div id="current-scene" class="scene-art"></div><div class="scene-caption"><strong id="scene-title"></strong><p id="scene-description"></p><span class="chip">현재 관측에서 관계 재계산</span></div></article>
+      </div>
+      <div class="reasoning-grid" aria-live="polite">
+        <article class="conditions"><div class="section-heading"><h2>기억 적용 조건</h2><span>3값 논리</span></div><div id="condition-list"></div><p class="footnote">unknown은 false가 아닙니다. 과거 좌표·높이는 복사하지 않습니다.</p></article>
+        <article class="decision" id="decision"><span class="tiny-label" id="decision-label"></span><h2 id="decision-title"></h2><p id="decision-reason"></p><div class="prompt-box"><span id="prompt-label">VLA로 전달할 명령</span><p id="prompt-text"></p></div><small id="decision-footnote"></small></article>
+      </div>
+      <div class="review-strip"><span class="review-number">FIRST GATE</span><div><strong>먼저, VLA가 “들어 올린 뒤 옮겨라”에 반응하는지 확인</strong><p>기본 명령과 수동 힌트로 실제 궤적을 비교 → 반응이 확인되면 Neo4j 검색 연결.</p></div><span class="outline-tag">성공률 미측정</span></div>
+      <details class="evaluation"><summary>성공률 비교의 계약 <span>동일한 평가 조건 ≠ 기억한 장면 재사용</span></summary><div class="evaluation-grid"><div><b>01 · 기억 수집</b><p>일부 배치에서 실패·복구 경험 수집. snapshot을 고정합니다.</p></div><div><b>02 · 새로운 배치</b><p>다른 위치·높이에서 원래 명령 / 일반 주의 / 경험 명령을 비교합니다.</p></div><div><b>03 · 결과 판정</b><p>같은 seed·관측 예산·모델을 사용. 성공률·충돌률·보류율·step 수를 함께 기록합니다.</p></div></div></details>
+    </section>
+    <section class="page" id="skills" aria-labelledby="skills-title" hidden>
+      <p class="eyebrow">02 / SKILL BOUNDARY</p><h1 id="skills-title">기억은 명령을 바꾸고,<br>VLA는 action을 만든다.</h1><p class="intro">pick_place 하나로 시작합니다. 들어 올리기·우회 궤적을 별도 코드로 대신 실행하지 않습니다.</p>
+      <div class="pipeline"><div><span>01</span><strong>관측 + 작업</strong><small>이미지 / robot state</small></div><b>→</b><div><span>02</span><strong>경험 검색</strong><small>조건 / 결과 / 근거</small></div><b>→</b><div><span>03</span><strong>명령 수정</strong><small>짧은 행동 지시</small></div><b>→</b><div class="highlight"><span>04</span><strong>고정 VLA</strong><small>실제 action 생성</small></div></div>
+      <div class="table-wrap"><table><thead><tr><th>인터페이스</th><th>입력 → 출력</th><th>실행 주체 / 경계</th></tr></thead><tbody>
+        <tr><td><code>observe</code><span class="cell-sub">관측 갱신</span></td><td>환경 → 이미지·robot state·관계</td><td>환경 어댑터. MVP 관계는 simulator state로 계산.</td></tr>
+        <tr><td><code>retrieve_experience</code><span class="cell-sub">기억 읽기</span></td><td>작업·관계 → episode ID·근거·적용 조건</td><td>Neo4j. 일치하지 않는 조건과 unknown도 반환.</td></tr>
+        <tr><td><code>adapt_instruction</code><span class="cell-sub">명령 수정</span></td><td>명령·검색·현재 조건 → adapt / keep / defer</td><td>어댑터. 목적 물체와 목표를 유지하고 수정 근거를 남김.</td></tr>
+        <tr class="focus-row"><td><code>pick_place</code><span class="cell-sub">유일한 조작 skill</span></td><td>이미지·robot state·명령 → action chunk</td><td>고정 VLA. 실제 모델·환경 선택 후 action spec 확정.</td></tr>
+        <tr><td><code>record_episode</code><span class="cell-sub">기억 쓰기</span></td><td>관측·명령·trajectory·결과 → episode ID</td><td>수집 모드에서 저장. 평가 기록은 retrieval snapshot에서 제외.</td></tr>
+      </tbody></table></div>
+      <div class="two-col"><article class="plain-card"><span class="tiny-label">UNKNOWN 처리</span><h2>한 번 더 관측, 그래도 모르면 보류</h2><p>defer는 행동 성공이 아닙니다. 자동 우회 skill로 대체하지 않고 보류율에 포함합니다. 추가 관측 예산은 모든 비교군에 동일하게 적용합니다.</p></article><article class="plain-card"><span class="tiny-label">아직 선택할 항목</span><h2>모델 × 환경의 조합</h2><p>언어 지시 반영 여부, 관측 입력, action 차원·단위·제어 주기를 먼저 확인합니다. 모델 의존 수치는 지금 임의로 고정하지 않습니다.</p></article></div>
+    </section>
+    <section class="page" id="graph" aria-labelledby="graph-title" hidden>
+      <p class="eyebrow">03 / GRAPH SCHEMA</p><h1 id="graph-title">장면은 보관하고,<br>관계를 검색한다.</h1><p class="intro">조건은 실행별 snapshot으로 저장합니다. 같은 물체의 서로 다른 시점 상태가 섞이지 않게 합니다.</p>
+      <div class="graph-layout"><article class="graph-canvas"><div class="card-heading"><span>제안 스키마 / 6 NODE TYPES</span><small>노드를 선택하면 필드 표시</small></div><div class="graph-map">
+        <div class="graph-row"><button class="graph-node" data-node="Task"><span>Task</span><small>작업과 대상 역할</small></button><span class="edge">← OF_TASK ─</span><button class="graph-node primary-node selected" data-node="Episode" aria-pressed="true"><span>Episode</span><small>한 번의 실행</small></button></div>
+        <div class="graph-branches"><span>HAS_CONDITION ↓</span><span>HAS_ATTEMPT ↓</span><span>SUPPORTED_BY ↓</span></div>
+        <div class="graph-row three"><button class="graph-node" data-node="Condition"><span>Condition</span><small>실행별 관계 관측</small></button><button class="graph-node" data-node="Attempt"><span>Attempt</span><small>명령과 행동 기록</small></button><button class="graph-node" data-node="Evidence"><span>Evidence</span><small>영상·로그 포인터</small></button></div>
+        <div class="graph-branches"><span></span><span>RESULTED_IN ↓</span><span></span></div>
+        <div class="graph-row centered"><button class="graph-node" data-node="Outcome"><span>Outcome</span><small>환경 판정 결과</small></button></div>
+        <div class="recovery-link">Episode E-002 ── RECOVERY_OF → Episode E-001</div>
+      </div><p class="footnote">복구 성공도 해당 조건에서의 관측입니다. 전역적인 성공 규칙으로 승격하지 않습니다.</p></article><article class="schema-detail" aria-live="polite"><span class="tiny-label">NODE CONTRACT</span><h2 id="node-title"></h2><p id="node-description"></p><div id="node-fields"></div></article></div>
+      <details class="evaluation"><summary>Neo4j 조회 초안 <span>조건으로 후보를 찾고, 복구 실행까지 연결</span></summary><pre><code>MATCH (failed:Episode)-[:OF_TASK]->(:Task {kind: $task_kind}),
+      (failed)-[:HAS_CONDITION]->(c:Condition),
+      (failed)-[:HAS_ATTEMPT]->(:Attempt)-[:RESULTED_IN]->(:Outcome {success: false}),
+      (recovery:Episode)-[:RECOVERY_OF]->(failed),
+      (recovery)-[:HAS_ATTEMPT]->(a:Attempt)-[:RESULTED_IN]->(:Outcome {success: true})
+WHERE c.predicate = 'obstacle_in_transfer_corridor'
+  AND c.value = 'true'
+  AND failed.id IN $snapshot_episode_ids
+  AND recovery.id IN $snapshot_episode_ids
+RETURN failed.id, recovery.id, a.instruction
+LIMIT 5</code></pre><p class="footnote">후보 조회 초안입니다. 후보의 전체 조건·근거를 읽고 현재 관측과 재검증해야 하며, 이 조회만으로 명령을 적용하지 않습니다.</p></details>
+    </section>
+    <section class="page" id="contracts" aria-labelledby="contracts-title" hidden>
+      <p class="eyebrow">04 / INPUT → OUTPUT</p><h1 id="contracts-title">경계가 명확하면,<br>함께 구현할 수 있다.</h1><p class="intro">v0.1 제안 계약. 시나리오에서 선택한 장면이 아래 예시 JSON에도 반영됩니다.</p>
+      <div class="contract-selector" role="group" aria-label="계약 단계"><button class="selected" data-contract="observation" aria-pressed="true">1 관측</button><button data-contract="retrieval" aria-pressed="false">2 검색</button><button data-contract="adaptation" aria-pressed="false">3 명령</button><button data-contract="policy" aria-pressed="false">4 VLA</button><button data-contract="record" aria-pressed="false">5 저장</button></div>
+      <div class="contract-heading"><div><span class="tiny-label" id="contract-module"></span><h2 id="contract-title"></h2></div><span class="outline-tag" id="contract-scene"></span></div>
+      <div class="json-grid"><article><div class="code-heading">INPUT <span>요청</span></div><pre id="contract-input"></pre></article><article><div class="code-heading">OUTPUT <span>응답 예시</span></div><pre id="contract-output"></pre></article></div>
+      <p class="contract-note" id="contract-note"></p>
+      <div class="two-col"><article class="plain-card"><span class="tiny-label">고정 제안</span><h2>근거와 적용 여부를 항상 반환</h2><p>schema_version, episode ID, 관측 시점, 명령 전후, 근거 ID를 보존합니다. unknown / no_match / defer를 정상적인 결과로 다룹니다.</p></article><article class="plain-card"><span class="tiny-label">함께 결정할 3가지</span><h2>이 초안에서 바꿀 지점</h2><ol><li>충돌 회피 시나리오로 시작할까?</li><li>어떤 VLA·환경으로 언어 반응을 확인할까?</li><li>조건 불명확 시 추가 관측 1회로 제한할까?</li></ol></article></div>
+    </section>
+    <footer><span>RoboRecall / DESIGN WORKBOARD · <a href="architecture.html">ARMA 아키텍처 비교 ↗</a></span><span>예시 데이터 · 규칙 기반 화면 · Neo4j/VLA 미연결</span></footer>
+  </main>
+</body>
+</html>

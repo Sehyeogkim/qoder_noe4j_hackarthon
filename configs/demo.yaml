@@ -1,0 +1,21 @@
+task_name: pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate
+suite: libero_spatial
+checkpoint: openvla/openvla-7b-finetuned-libero-spatial
+seed: 7
+max_actions: 220
+interval_actions: 10
+model: gemini-3-flash-preview
+perception_mode: simulator_assisted_task_rgb_planning
+memory_build_states: [0, 1]
+smoke_state: 4
+evaluation_states: [10]
+comparison_conditions: [agents_no_memory, agents_memory]
+max_retries: 1
+gpu: NVIDIA A40
+gpu_rate_ceiling_usd_per_hour: 0.49
+budget:
+  total_usd: 10
+  compute_storage_usd: 5
+  api_usd: 4
+  reserve_usd: 1
+  max_pod_hours: 6

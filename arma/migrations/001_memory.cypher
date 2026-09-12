@@ -1,0 +1,11 @@
+CREATE CONSTRAINT arma_attempt_id IF NOT EXISTS FOR (n:Attempt) REQUIRE n.attempt_id IS UNIQUE;
+CREATE CONSTRAINT arma_decision_id IF NOT EXISTS FOR (n:DecisionStep) REQUIRE n.decision_id IS UNIQUE;
+CREATE CONSTRAINT arma_run_id IF NOT EXISTS FOR (n:Run) REQUIRE n.run_id IS UNIQUE;
+CREATE CONSTRAINT arma_task_id IF NOT EXISTS FOR (n:Task) REQUIRE n.task_id IS UNIQUE;
+CREATE CONSTRAINT arma_step_id IF NOT EXISTS FOR (n:StepEvent) REQUIRE n.id IS UNIQUE;
+CREATE CONSTRAINT arma_context_id IF NOT EXISTS FOR (n:ContextObservation) REQUIRE n.id IS UNIQUE;
+CREATE CONSTRAINT arma_instruction_id IF NOT EXISTS FOR (n:Instruction) REQUIRE n.id IS UNIQUE;
+CREATE CONSTRAINT arma_evidence_id IF NOT EXISTS FOR (n:Evidence) REQUIRE n.id IS UNIQUE;
+CREATE CONSTRAINT arma_skill_id IF NOT EXISTS FOR (n:Skill) REQUIRE n.id IS UNIQUE;
+CREATE CONSTRAINT arma_snapshot_id IF NOT EXISTS FOR (n:MemorySnapshot) REQUIRE n.snapshot_id IS UNIQUE;
+CREATE INDEX arma_attempt_eligibility IF NOT EXISTS FOR (n:Attempt) ON (n.dataset_split, n.provenance, n.status);

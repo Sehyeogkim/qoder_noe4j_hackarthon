@@ -1,0 +1,12 @@
+Generation method: built-in image generation tool.
+
+Use case: productivity-visual. Create a finished 16:9 landscape Google Slides PROBLEM STATEMENT slide for ARMA, entirely in English. Match the approved deck style: pure white background, large bold deep navy sans-serif typography, teal accents, orange highlights for failure experience and memory, tasteful realistic white-and-black Franka Panda robot illustration, clean technical diagram, generous whitespace. No slide mockup or frame.
+Exact text and composition:
+Top left small teal eyebrow "THE PROBLEM"
+Below large navy headline on two lines: "A failed grasp shouldn’t mean\na full retraining cycle."
+Main body two spacious zones across the slide.
+Left approximately 42%: high-quality technical illustration of fixed-base white-and-black robot arm whose gripper has nudged a teal ceramic cup over on a white tabletop. Cup intact, sideways, no water. Small orange curved motion cue and orange warning symbol, subtle. Below illustration bold navy text "The robot fails." and smaller navy text "The experience is captured.\nThe policy stays the same."
+Right approximately 50%: a simple horizontal three-stage process with clean pale blue rounded cards, understated navy icons and teal arrows. Exact labels "Collect corrections" then "Fine-tune policy" then "Evaluate & deploy". Above process small navy heading "The conventional improvement loop". Below it three concise separated labels with simple icons: "More data" / "GPU compute" / "Engineering time". Below these small understated navy sentence "Updating model weights adds an iteration cycle."
+Bottom across slide a wide very pale teal rounded banner, a small orange memory/graph icon at left, and large navy question: "Can past failures guide the next attempt—\nwithout updating model weights?"
+Tiny bottom-left footer "ARMA · Agentic Robot Memory Architecture", bottom-right "02".
+Important accuracy: title is a motivating question/position, do not state retraining always necessary. Conventional loop is illustrative not exhaustive. No invented percentages, dollar amounts, durations, results or success guarantee. Keep clear text hierarchy and readability. Do not add other copy. Sparse polished presentation design, matching previous ARMA cover colors and robot material quality.

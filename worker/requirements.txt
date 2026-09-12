@@ -1,0 +1,21 @@
+# Install in isolated Python 3.10; CUDA torch installed by setup_worker.sh.
+fastapi==0.115.12
+pydantic==2.11.5
+uvicorn==0.34.2
+Pillow==10.4.0
+numpy==1.26.4
+transformers==4.40.1
+tokenizers==0.19.1
+timm==0.9.10
+robosuite==1.4.1
+imageio==2.37.0
+imageio-ffmpeg==0.6.0
+huggingface-hub==0.30.2
+# tfds 4.9.3 imports these generated protos; newer metadata requires protobuf 5+
+# despite TensorFlow 2.15 requiring protobuf <5. Keep the compatible generation.
+tensorflow-metadata==1.14.0
+protobuf==3.20.3
+# robosuite 1.4.1's legacy joint bindings fail with modern MuJoCo 3.x.
+mujoco==2.3.7
+# Match protobuf generation above; newer wandb raises its minimum to protobuf 4.
+wandb==0.16.6
