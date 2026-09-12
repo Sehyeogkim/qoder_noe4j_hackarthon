@@ -1,0 +1,10 @@
+{
+  "version": "diagnostic-goal-paraphrases-v1",
+  "task_id": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+  "task_goal": "pick up the black bowl from table center and place it on the plate",
+  "instructions": [
+    "grasp the black bowl in the middle of the table, lift it, and put it on the plate",
+    "put the black bowl in the middle of the table on the plate",
+    "pick up the black bowl at the center of the table and put it on the plate"
+  ]
+}

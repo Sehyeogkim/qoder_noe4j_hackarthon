@@ -163,3 +163,62 @@ def test_rejected_candidate_evidence_cannot_support_adaptation(tmp_path):
     result=runner.run(condition='agents_memory',synthetic=True,snapshot_id='fixture')
     assert result['outcome']=='unknown'
     assert fixture.step_count==0
+
+
+def test_valid_keep_with_bad_presentation_survives_bounded_repair(tmp_path):
+    import json
+    from types import SimpleNamespace
+    from google.genai import types
+    from arma.agents import GeminiAgents
+    from arma.budget import Budget
+    gemini=GeminiAgents.__new__(GeminiAgents)
+    gemini.types=types;gemini.root=tmp_path;gemini.model='gemini-3-flash-preview';gemini.calls=[]
+    gemini.budget=Budget(tmp_path/'budget.sqlite')
+    calls=[]
+    def generate_content(**kwargs):
+        calls.append(kwargs)
+        ctx=json.loads(kwargs['contents'][0].text)
+        value={k:ctx[k] for k in ('attempt_id','decision_index','based_on_step','observation_id')}
+        value.update(decision='keep',executed_instruction=GOAL,source_decision_ids=[],evidence_ids=[],
+            candidates=[],reason='No memory supplied',memory_summary=[],current_comparison=[],adaptation_reason=[])
+        return SimpleNamespace(text=json.dumps(value),usage_metadata=SimpleNamespace(prompt_token_count=100,candidates_token_count=100,thoughts_token_count=0))
+    gemini.client=SimpleNamespace(models=SimpleNamespace(generate_content=generate_content))
+    class PresentationAgents(FakeAgents):
+        calls=gemini.calls
+        def retrieve(self,*args):return gemini.retrieve(*args)
+    fixture,engine,runner,memory=integrated(tmp_path,agents=PresentationAgents())
+    result=runner.run(synthetic=True)
+    assert result['outcome']=='success' and fixture.step_count==3
+    retrieval=result['decisions'][0]['retrieval']
+    assert retrieval['explanation_degraded'] is True and retrieval['explanation_errors']
+    assert retrieval['memory_summary']==retrieval['current_comparison']==retrieval['adaptation_reason']==[]
+    assert len(calls)==2
+    assert gemini.calls[-1]['fallback']=='execution_valid_explanation_omitted'
+    assert json.loads(gemini.calls[-1]['response_text'])['executed_instruction']==GOAL
+    assert gemini.calls[-1]['validation_errors']
+
+
+def test_keep_retains_committed_adapted_instruction_across_intervals(tmp_path):
+    from arma.contracts import CandidateChoice, INSTRUCTION_CONTROLLER_VERSION
+    adapted=GOAL+'. Secure the bowl before lifting and moving it to the plate.'
+    class CandidateMemory(InMemoryRepository):
+        def search_experiences(self,query):
+            return [{'source_decision_id':'source:1','evidence_ids':['source-frame']}]
+    class RetainingAgents(FakeAgents):
+        seen=[]
+        def retrieve(self,ctx,*args):
+            self.seen.append(ctx['current_instruction'])
+            value=super().retrieve(ctx,*args)
+            if ctx['decision_index']==1:
+                value.decision='adapt';value.executed_instruction=adapted
+                value.source_decision_ids=['source:1'];value.evidence_ids=['source-frame']
+                value.candidates=[CandidateChoice(source_decision_id='source:1',adopted=True,reason='fixture')]
+            return value
+    agents=RetainingAgents()
+    fixture,engine,runner,memory=integrated(tmp_path,agents=agents,memory=CandidateMemory(),success_at=13)
+    result=runner.run(condition='agents_memory',synthetic=True,snapshot_id='fixture')
+    assert result['outcome']=='success' and result['step_index']==13
+    assert agents.seen==[GOAL,adapted]
+    assert [d['execution']['actual_instruction'] for d in result['decisions']]==[adapted,adapted]
+    assert result['decisions'][1]['retrieval']['decision']=='keep'
+    assert result['manifest']['instruction_controller_version']==INSTRUCTION_CONTROLLER_VERSION

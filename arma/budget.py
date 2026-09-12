@@ -6,6 +6,15 @@ import time
 import uuid
 from pathlib import Path
 
+MODEL_PRICING = {
+    'gemini-3-flash-preview': {'input_usd_per_million':0.5,'output_usd_per_million':3.0},
+    'gemini-3.5-flash': {'input_usd_per_million':1.5,'output_usd_per_million':9.0},
+}
+
+def model_pricing(model):
+    try:return dict(MODEL_PRICING[model])
+    except KeyError:raise ValueError(f'No approved price schedule for model {model!r}; paid dispatch refused') from None
+
 class BudgetExceeded(RuntimeError):
     pass
 
@@ -78,5 +87,6 @@ class Budget:
         return max(0.0,self.limits[category]-self.totals()[category])
 
     @staticmethod
-    def api_cost(input_tokens, output_tokens):
-        return (input_tokens*0.5 + output_tokens*3.0)/1_000_000
+    def api_cost(input_tokens, output_tokens, model='gemini-3-flash-preview'):
+        rates=model_pricing(model)
+        return (input_tokens*rates['input_usd_per_million'] + output_tokens*rates['output_usd_per_million'])/1_000_000

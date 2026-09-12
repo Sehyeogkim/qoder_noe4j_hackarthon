@@ -1,0 +1,41 @@
+{
+  "purpose": "Authored instruction calibration followed by a separately recorded same-state memory recall, not a held-out evaluation.",
+  "init_state": 19,
+  "max_actions": 220,
+  "candidates": [
+    {
+      "version": "secure_grasp",
+      "schedule": [
+        {
+          "start_step": 0,
+          "instruction": "pick up the black bowl from table center and place it on the plate. Grasp the black bowl securely and lift it off the table before moving it toward the plate. Then lower the bowl onto the plate and open the gripper."
+        }
+      ]
+    },
+    {
+      "version": "open_lower_close",
+      "schedule": [
+        {
+          "start_step": 0,
+          "instruction": "pick up the black bowl from table center and place it on the plate. First move the open gripper above the bowl at the center of the table, lower it around the rim, close the fingers, and lift the bowl. Then move it above the plate and open the gripper."
+        }
+      ]
+    },
+    {
+      "version": "center_bowl",
+      "schedule": [
+        {
+          "start_step": 0,
+          "instruction": "pick up the black bowl from table center and place it on the plate. Pick up the black bowl at the center of the table, not the bowl on the left. Make sure the bowl is held before carrying it to the plate."
+        }
+      ]
+    }
+  ],
+  "selection_rule": "Run predeclared order; stop at first environment success or infrastructure unknown. Retain every outcome.",
+  "sources": [
+    "pick_place_v1 authored procedure",
+    "baseline state19 observed moving failure; actual bowl remains table",
+    "actual success source episodes state0/state1"
+  ],
+  "original_snapshot_modified": false
+}

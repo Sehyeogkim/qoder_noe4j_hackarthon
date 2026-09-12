@@ -1,0 +1,21 @@
+{
+  "experiment_id": "same-state-recall-v1",
+  "purpose": "Calibrated same-state recall demo, not a held-out generalization result.",
+  "task_name": "pick_up_the_black_bowl_from_table_center_and_place_it_on_the_plate",
+  "init_state_id": 19,
+  "seed": 7,
+  "policy_actions_max": 220,
+  "interval_actions_max": 10,
+  "baseline_attempt_id": "83cdfc31a1354b80adf58289fbe5b617",
+  "corpus": {
+    "origin": "authored diagnostic full-task instruction calibration",
+    "selection_rule": "Entire v2 predeclared trial sequence, stopped at first environment success; both completed trials included.",
+    "attempt_ids": ["probe-231d0ff3461e49d4b5919385cfe36d7a", "probe-64fef87b772f4c2f9d0576bb5990137c"],
+    "retry_sequence": ["probe-231d0ff3461e49d4b5919385cfe36d7a", "probe-64fef87b772f4c2f9d0576bb5990137c"],
+    "earlier_unsuccessful_calibration": "artifacts/instruction-calibration-v1/summary.json",
+    "original_evaluation_snapshot_modified": false
+  },
+  "validation": "A successful direct instruction probe is not an agent-system result. Record a separate three-agent episode, actual retrieved sources, actual executed instruction and environment predicate.",
+  "comparison_limit": "Baseline and recalled episode share the same initialization used during instruction calibration; this demonstrates recall of a known local solution, not general improvement.",
+  "paid_api_limit_usd": 0.8
+}

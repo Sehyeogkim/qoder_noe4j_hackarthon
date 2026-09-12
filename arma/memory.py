@@ -269,12 +269,25 @@ def _graph(attempts: dict, decisions: dict) -> dict:
         edge(f"Attempt:{d['attempt_id']}", did, "HAS_DECISION")
         instruction = d.get("execution", {}).get("actual_instruction", d.get("retrieval", {}).get("instruction", ""))
         edge(did, node("Instruction", _hash(instruction), {"text": instruction}), "USED_INSTRUCTION")
-        planner = d.get("planner", {})
-        skill = planner.get("skill", planner.get("skill_id", "pick_place_v1"))
-        if isinstance(skill, dict):
-            skill = skill.get("skill_id", skill.get("id", "pick_place_v1"))
-        version = planner.get("skill_version", "1")
-        edge(did, node("Skill", f"{skill}:{version}", {"skill_id": skill, "version": version, "provenance": "authored_procedure"}), "USED_SKILL")
+        attempt = attempts[d["attempt_id"]]
+        origin = d.get("origin", attempt.get("origin"))
+        manual = origin in ("authored_skill_procedure", "authored_instruction_probe") or d.get("record_kind", attempt.get("record_kind")) == "authored_instruction_probe"
+        if manual:
+            # A recorded manual probe did not invoke a planner. Do not invent
+            # that agent's default skill attribution in the exported graph.
+            authored = d.get("authored_skill", attempt.get("authored_skill"))
+            if authored is not None:
+                if not isinstance(authored, dict) or not authored.get("skill_id") or not authored.get("version"):
+                    raise MemoryValidationError("authored_skill requires an explicit skill_id and version")
+                skill, version = authored["skill_id"], authored["version"]
+                edge(did, node("Skill", f"{skill}:{version}", {"skill_id": skill, "version": version, "provenance": "authored_procedure"}), "USED_SKILL")
+        else:
+            planner = d.get("planner", {})
+            skill = planner.get("skill", planner.get("skill_id", "pick_place_v1"))
+            if isinstance(skill, dict):
+                skill = skill.get("skill_id", skill.get("id", "pick_place_v1"))
+            version = planner.get("skill_version", "1")
+            edge(did, node("Skill", f"{skill}:{version}", {"skill_id": skill, "version": version, "provenance": "authored_procedure"}), "USED_SKILL")
         for i, action in enumerate(d.get("execution", {}).get("actions", [])):
             edge(did, node("StepEvent", f"{d['decision_id']}:{i}", action), "HAS_ACTION")
         for i, context in enumerate(d.get("contexts", [])):

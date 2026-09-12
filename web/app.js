@@ -62,6 +62,44 @@
     node.append(element("span", label, "field-label"), element("strong", value));
     return node;
   }
+  function memoryExplanation(decision) {
+    const section = element('section', undefined, 'memory-explanation');
+    section.append(element('h3', 'Why this instruction?'), element('p', 'Recorded Retrieval Agent interpretation. Citations are evidence references, not independent confirmation.', 'muted'));
+    const retrieval = decision?.retrieval || {};
+    const fields = [['memory_summary', 'Past memory'], ['current_comparison', 'Compared with now'], ['adaptation_reason', 'Reason for this instruction']];
+    let structured = false;
+    for (const [key, label] of fields) {
+      if (!Array.isArray(retrieval[key]) || !retrieval[key].length) continue;
+      structured = true;
+      section.append(element('h4', label));
+      for (const item of retrieval[key]) {
+        section.append(element('p', show(item.text)), element('p', `Agent grounding label: ${show(item.grounding)} · Source steps: ${(item.source_decision_ids || []).join(', ') || 'None'} · Historical evidence: ${(item.evidence_ids || []).join(', ') || 'None'} · Current evidence: ${(item.current_evidence_ids || []).join(', ') || 'None'}`, 'memory-citations'));
+      }
+    }
+    if (!structured) section.append(element('h4', 'Legacy recorded rationale'), element('p', retrieval.reason || 'No explanation recorded.'));
+    const sources = new Set(retrieval.source_decision_ids || []);
+    const cited = new Set(retrieval.evidence_ids || []);
+    for (const [key] of fields) for (const item of retrieval[key] || []) {
+      for (const id of item.source_decision_ids || []) sources.add(id);
+      for (const id of item.evidence_ids || []) cited.add(id);
+    }
+    const historical = bundle.graph.nodes.filter(n => n.label === 'DecisionStep' && sources.has(n.properties?.decision_id));
+    const frames = element('div', undefined, 'memory-frame-grid');
+    const addFrame = (label, ref, id) => {
+      const path = mediaPath(ref); if (!path || !/\.(png|jpe?g|webp|gif)$/i.test(path)) return;
+      const figure = element('figure'); const img = element('img'); img.src = path; img.alt = label; img.loading = 'lazy';
+      figure.append(img, element('figcaption', `${label} · ${id || 'ID unavailable'}`)); frames.append(figure);
+    };
+    for (const source of historical) {
+      const evidence = (source.properties.evidence || []).find(e => cited.has(e.evidence_id) && mediaPath(e.uri));
+      const adopted = (retrieval.source_decision_ids || []).includes(source.properties.decision_id);
+      if (evidence) addFrame(`${adopted ? 'Adopted source' : 'Explanation reference; not adopted'} ${source.properties.decision_id}`, evidence.uri, evidence.evidence_id);
+    }
+    const current = decision?.execution?.observation_before;
+    if (current) addFrame('Current observation before instruction', current.rgb_ref, current.evidence_id || current.observation_id);
+    section.append(frames);
+    return section;
+  }
   function makeCard(kind, attempt) {
     const card = element("article", undefined, `card ${kind}`);
     const heading = element("div", undefined, "card-heading");
@@ -93,14 +131,16 @@
     if (!decisions.length) {picker.append(element("option", "No decision records available")); picker.disabled = true;}
     const instruction = element("p", "—", "instruction");
     const stage = element("p", "", "muted");
+    const explanation = element('div');
     const updateDecision = () => {
       const decision = decisions[Number(picker.value)];
       instruction.textContent = show(decision?.execution?.actual_instruction ?? decision?.retrieval?.instruction ?? decision?.retrieval?.executed_instruction ?? attempt.executed_instruction);
-      stage.textContent = decision ? kind === "baseline" ? `Environment task result: ${show(decision.evaluation?.task_outcome ?? "running")} · Actions: ${show(decision.execution?.start_step_index)} → ${show(decision.execution?.end_step_index)} · No LLM stage selection` : `Stage: ${show(decision.planner?.stage ?? decision.stage)} · Subtask: ${show(decision.evaluation?.subtask_outcome)} · Task: ${show(decision.evaluation?.task_outcome)} · Actions: ${show(decision.execution?.start_step_index)} → ${show(decision.execution?.end_step_index)}` : "No interval-level evaluation available.";
+      stage.textContent = decision ? kind === "baseline" ? `Environment task result: ${show(decision.evaluation?.task_outcome ?? "running")} · Actions: ${show(decision.execution?.start_step_index)} → ${show(decision.execution?.end_step_index)} · No LLM stage selection` : `Agent-selected stage: ${show(decision.planner?.stage ?? decision.stage)} · Agent subtask judgment: ${show(decision.evaluation?.subtask_outcome)} · Environment task result: ${show(decision.evaluation?.task_outcome)} · Actions: ${show(decision.execution?.start_step_index)} → ${show(decision.execution?.end_step_index)}` : "No interval-level evaluation available.";
+      explanation.replaceChildren(...(decision && kind !== 'baseline' ? [memoryExplanation(decision)] : []));
       if (decision) showDetails("Decision record", decision);
     };
     picker.addEventListener("change", updateDecision);
-    body.append(element("span", kind === "baseline" ? "Execution interval" : "Decision interval", "field-label"), picker, element("span", "Actual policy instruction", "field-label"), instruction, stage);
+    body.append(element("span", kind === "baseline" ? "Execution interval" : "Decision interval", "field-label"), picker, element("span", "Exact instruction sent to OpenVLA", "field-label"), instruction, stage, explanation);
     const metrics = element("div", undefined, "metrics");
     metrics.append(metric("Result", show(attempt.outcome ?? attempt.status)), metric("Actions / decisions", `${show(attempt.step_index)} / ${show(attempt.decision_index)}`), metric("Wall time", time(attempt.elapsed_ms)), metric("Agent API cost", cost(attempt.cost_usd)));
     body.append(metrics); card.append(body); updateDecision(); return card;

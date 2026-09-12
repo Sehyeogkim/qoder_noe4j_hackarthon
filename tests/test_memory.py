@@ -233,3 +233,35 @@ def test_invalid_progress_hint_is_rejected(invalid):
     r=InMemoryRepository();completed(r,'a');r.freeze_snapshot('frozen',['a'])
     with pytest.raises(MemoryValidationError,match='nonnegative integer'):
         r.search_experiences(query(based_on_step=invalid))
+
+
+def test_authored_probe_export_does_not_invent_agent_outputs_or_default_skill():
+    r=InMemoryRepository()
+    a=attempt('manual-fixture',provenance='synthetic_fixture')
+    a['origin']='authored_skill_procedure'
+    r.start_attempt(a)
+    d=decision('manual-fixture:1')
+    d.pop('planner');d.pop('retrieval')
+    d['evaluation']={'task_judgment_source':'simulator_task_predicate','task_outcome':None,'subtask_outcome':'unknown'}
+    r.commit_decision('manual-fixture',0,d,{'step_index':1})
+    graph=r.export_graph()
+    assert not any(n['label']=='Skill' for n in graph['nodes'])
+    assert not any(e['type'] in ('USED_SKILL','RETRIEVED') for e in graph['edges'])
+    stored=next(n['properties'] for n in graph['nodes'] if n['label']=='DecisionStep')
+    assert 'planner' not in stored and 'retrieval' not in stored
+    assert stored['evaluation']['subtask_outcome']=='unknown'
+
+
+def test_authored_probe_honors_only_explicit_authored_skill_and_preserves_agent_skill():
+    r=InMemoryRepository()
+    a=attempt('manual-fixture',provenance='synthetic_fixture')
+    r.start_attempt(a)
+    d=decision('manual-fixture:1');d.pop('planner');d.pop('retrieval')
+    d.update(record_kind='authored_instruction_probe',authored_skill={'skill_id':'calibration-grasp','version':'v2'})
+    r.commit_decision('manual-fixture',0,d,{'step_index':1})
+    r.start_attempt(attempt('agent-fixture',provenance='synthetic_fixture'))
+    r.commit_decision('agent-fixture',0,decision('agent-fixture:1'),{'step_index':1})
+    graph=r.export_graph()
+    skills={n['id'] for n in graph['nodes'] if n['label']=='Skill'}
+    assert skills=={'Skill:calibration-grasp:v2','Skill:pick_place_v1:1'}
+    assert {e['target'] for e in graph['edges'] if e['source']=='DecisionStep:manual-fixture:1' and e['type']=='USED_SKILL'}=={'Skill:calibration-grasp:v2'}

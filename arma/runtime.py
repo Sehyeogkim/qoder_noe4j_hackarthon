@@ -8,6 +8,7 @@ from pathlib import Path
 from .contracts import GOAL,TASK_NAME,SKILL,STAGES,EvaluationRecord,validate_envelope,validate_evaluation,validate_planner,validate_retrieval,expected_outcome
 from .agents import FakeAgents,BaselineAgents
 from .memory import RETRIEVAL_RANKING_VERSION
+from .contracts import INSTRUCTION_CONTROLLER_VERSION
 
 def now(): return datetime.now(timezone.utc).isoformat()
 def digest(value): return hashlib.sha256(json.dumps(value,sort_keys=True,default=str).encode()).hexdigest()
@@ -39,6 +40,7 @@ class Runner:
             'agent_calls_enabled':condition!='baseline',
             'retrieval_input_version':getattr(self.agents,'retrieval_input_version',None),
             'retrieval_ranking_version':RETRIEVAL_RANKING_VERSION,
+            'instruction_controller_version':INSTRUCTION_CONTROLLER_VERSION,
             'backend_source_hashes':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(Path(__file__).resolve().parent.glob('*.py'))},
             'prompt_hashes':{p.name:hashlib.sha256(p.read_bytes()).hexdigest() for p in sorted(prompt_root.glob('*.md'))},
             'skill_hash':digest(SKILL),'memory_snapshot_id':snapshot_id,
@@ -71,6 +73,8 @@ class Runner:
                 ctx={"attempt_id":attempt_id,"decision_index":attempt['decision_index']+1,
                     "based_on_step":attempt['step_index'],"observation_id":obs['observation_id'],
                     "original_goal":GOAL,"success_criteria":attempt['success_criteria'],
+                    "current_instruction":attempt.get('executed_instruction') or GOAL,
+                    "allowed_current_evidence_ids":[obs['evidence_id']],
                     "last_evaluation":last_evaluation,"remaining_actions":self.max_actions-attempt['step_index']}
                 active=BaselineAgents() if condition=='baseline' else self.agents
                 planner=active.plan(ctx,obs);validate_planner(planner,ctx)

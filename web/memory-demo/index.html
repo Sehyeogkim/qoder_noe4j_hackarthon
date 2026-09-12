@@ -1,0 +1,25 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>ARMA · Inside the memory</title><link rel="stylesheet" href="styles.css"></head>
+<body>
+<header><a class="brand" href="index.html"><span>A</span><div>ARMA<small>AGENTIC ROBOT MEMORY ARCHITECTURE</small></div></a><div class="offline"><i></i> LOCAL EXPORT · OFFLINE READY</div></header>
+<main>
+<section class="hero"><div><p class="eyebrow">INSIDE NEO4J MEMORY</p><h1>Experience you can <em>inspect.</em></h1><p class="lede">Follow a real robot attempt, the instruction it executed, and the evidence it retrieved.</p></div><span id="provenance" class="badge">NO DATA LOADED</span></section>
+<div id="error" class="notice" hidden></div>
+<section id="empty" class="empty"><h2>The graph export is not here yet.</h2><p>Keep data.js and its assets folder beside this page. No database or GPU connection is needed.</p></section>
+<div id="workspace" hidden>
+<section id="metrics" class="metrics" aria-label="Actual export counts"></section>
+<div class="boundary"><strong>External experience memory. Frozen policy.</strong><span id="boundary-copy"></span></div>
+<nav class="tabs" aria-label="Graph view"><button id="experience-tab" class="active" aria-selected="true">Experience graph</button><button id="schema-tab" aria-selected="false">Schema map</button><span id="export-time"></span></nav>
+<section id="experience-view" class="explorer">
+<aside class="attempts-panel"><div class="panel-heading"><p class="eyebrow">RECORDED EPISODES</p><h2>Choose an attempt</h2></div><label class="select-label">Corpus<select id="corpus-filter"><option value="all">All exported attempts</option><option value="source">Frozen memory sources</option><option value="evaluation">Evaluation only</option></select></label><div id="attempt-list"></div><p class="aside-note">Only the frozen snapshot's two listed source attempts are eligible for this comparison. Evaluation records remain inspectable.</p></aside>
+<section class="graph-panel"><div class="panel-heading"><div><p class="eyebrow">ACTUAL STORED RELATIONSHIPS</p><h2 id="graph-title">Attempt graph</h2><p id="graph-subtitle" class="muted"></p></div><button id="overview" class="quiet">Collapse intervals</button></div>
+<div class="graph-toolbar"><div id="interval-controls"><button id="prev-page" aria-label="Previous intervals">←</button><span id="page-label"></span><button id="next-page" aria-label="Next intervals">→</button></div><label><input id="show-actions" type="checkbox"> Focused actions</label><label><input id="show-evidence" type="checkbox"> Focused evidence</label></div>
+<div class="legend"><span><i class="memory-dot"></i> Eligible memory source</span><span><i class="evaluation-dot"></i> Evaluation</span><span><i class="line-dot"></i> Stored relationship</span><span><i class="retrieved-dot"></i> RETRIEVED</span></div>
+<div id="graph" class="graph" aria-label="Interactive stored experience graph"></div><div class="graph-footer"><span id="visible-count"></span><span>Click a node or relationship to inspect its record.</span></div>
+</section>
+<aside id="inspector" class="inspector"><div class="panel-heading"><p class="eyebrow">RECORD INSPECTOR</p><h2>Select a node</h2></div></aside>
+</section>
+<section id="schema-view" hidden><div class="schema-intro"><h2>The schema and the records are different views.</h2><p>This map describes entity types and permitted connections. Counts come from this exported graph; a zero means no such record was exported.</p></div><div id="schema-grid" class="schema-grid"></div><div class="schema-edges"><h3>Relationships present in this export</h3><div id="schema-relations"></div></div></section>
+<section class="snapshot panel"><div><p class="eyebrow">FROZEN RETRIEVAL CORPUS</p><h2>A named snapshot, not the whole training dataset.</h2><p id="snapshot-name" class="mono"></p><p>Collected robot experiences live outside the model. This viewer contains only the exported runs and references; it does not contain or represent OpenVLA's original training data.</p></div><div><h3>Eligible source IDs</h3><div id="snapshot-sources"></div><p class="muted">Evaluation attempts are not automatically added to this frozen snapshot.</p></div></section>
+</div></main><footer><span>OpenVLA · LIBERO · Neo4j · ARMA</span><span>Agent interpretations are labeled. Whole-task outcomes come from execution records.</span></footer>
+<script src="data.js"></script><script src="trace-data.js"></script><script src="app.js"></script></body></html>
