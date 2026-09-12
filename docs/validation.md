@@ -24,4 +24,3 @@ This page separates recorded execution from hypotheses and presentation material
 The recordings demonstrate real OpenVLA execution, external-memory integration, and instruction sensitivity. They do **not** demonstrate general success-rate improvement, held-out generalization, or physical-robot performance. The successful state-19 instruction was calibrated directly and must not be presented as an agent-retrieved success.
 
 Compact public evidence is in [`demo/`](../demo/). The full action-level archive remains local because it is approximately 428 MB.
-

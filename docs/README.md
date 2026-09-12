@@ -10,4 +10,3 @@
 - [Instruction probes](instruction-probes.md) — diagnostic instruction experiments.
 
 Historical plans, operational snapshots, presentation assets, and the original prototype are retained under [`archive/`](archive/) for provenance. They are not the current product path.
-

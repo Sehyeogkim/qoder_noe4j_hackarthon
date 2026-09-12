@@ -27,4 +27,3 @@ This comparison establishes that instruction wording can change the frozen polic
 ## Validation boundary
 
 The full local archive contains action-level observations, hashes, agent records, and Neo4j exports but is intentionally excluded from Git because it is approximately 428 MB. The repository publishes only these compact recordings and the summary needed to evaluate the project honestly.
-
