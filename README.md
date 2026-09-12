@@ -34,19 +34,11 @@ Task + Observation → Plan → Retrieve Memory → Frozen OpenVLA → Robot
 - **Agents:** Gemini-based planner, retrieval, and evaluator roles
 - **Backend:** Python · FastAPI
 
-## Quick start
+## Verified real execution
 
-The local contract demo uses fake agents and a fake robot, so it requires no GPU, API key, or database:
+ARMA was run on an **NVIDIA L40S GPU on RunPod** with the real frozen OpenVLA checkpoint and the LIBERO Franka Panda simulation. The recorded baseline completed the task successfully after **134 policy actions across 14 intervals**.
 
-```sh
-uv venv --python 3.11 .venv
-uv pip install --python .venv/bin/python -e '.[test]'
-.venv/bin/python -m pytest -q
-.venv/bin/python -m arma.cli --artifacts artifacts/synthetic smoke --output replay-output
-.venv/bin/python -m http.server 8766 --directory replay-output
-```
-
-Then open `http://localhost:8766`.
+This result verifies real GPU inference and simulated robot execution. It was a baseline run without Gemini agent decisions or Neo4j memory retrieval; the complete memory-vs-no-memory experiment remains in progress.
 
 ## Run on RunPod (real GPU)
 
@@ -127,6 +119,20 @@ Build and push this image before renting GPU time. This repository contains the 
 </details>
 
 For the experiment design, see the [Experiment Plan](PLAN.md) and [Implementation Log](docs/implementation-log.md).
+
+<details>
+<summary>Optional: local contract test without a GPU</summary>
+
+This developer-only test uses fake agents and a fake robot to validate the software loop. It is not the RunPod/OpenVLA experiment.
+
+```sh
+uv venv --python 3.11 .venv
+uv pip install --python .venv/bin/python -e '.[test]'
+.venv/bin/python -m pytest -q
+.venv/bin/python -m arma.cli --artifacts artifacts/synthetic smoke --output replay-output
+```
+
+</details>
 
 ## Current status
 
